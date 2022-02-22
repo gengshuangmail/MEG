@@ -21,7 +21,9 @@ Environment
     /neuro/mri/<your subject>. For example, if the subject you're analysing
     is John Smith, the path surf/lh.pial refers to the file
     /neuro/mri/smith_john/surf/lh.pial
-
+module load python/python2.7
+module load mne/2.7.3
+module load freesurfer/7.2.0
 
 Procedure
 =========
@@ -29,13 +31,11 @@ Procedure
 0. Prepare your user account
 
      Add to ~/.bashrc file
-        export FREESURFER_HOME=/home/nmolinaro/nmolinaro/freesurfer. :FREESURFER_HOME=/export/sgeng/sgeng/toolbox/freesurfer
-	    export SUBJECTS_DIR=/home/nmolinaro/nmolinaro/MUTI
-        export MNE_ROOT=/home/nmolinaro/nmolinaro/mne
-        export MATLAB_ROOT=/home/nmolinaro/nmolinaro/MATLAB
-        . $MNE_ROOT/bin/mne_setup_sh
-        . $FREESURFER_HOME/SetUpFreeSurfer.csh
-
+         export FREESURFER_HOME=/export/home/sgeng/sgeng/toolbox/freesurfer
+	 export SUBJECTS_DIR=/export/home/sgeng/sgeng/projects/naming/Naming_controls/filedtrip_data/FreeSurfer
+         export MATLAB_ROOT=/export/home//sgeng/sgeng/toolbox/MATLAB                    
+        . $MNE_ROOT/bin/mne_setup_sh                               
+	. $FREESURFER_HOME/SetUpFreeSurfer.csh                       
      Add to ~/matlab/startup.m
         fshome = getenv('FREESURFER_HOME');
         fsmatlab = sprintf('%s/matlab',fsmatlab);
@@ -53,7 +53,7 @@ Procedure
 1. Set the $SUBJECT variable to your subject name as found under
      /neuro/mri. For example,
 
-			export SUBJECT smith_john
+			export SUBJECT S06_5153
 
      if you are using C-shell or TC-shell or
 
