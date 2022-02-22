@@ -1,0 +1,336 @@
+Synopsis for using FreeSurfer and MNE suite
+===========================================
+
+Lauri Parkkonen, modified by Nicola  2011-03-18
+modified by shuang 2022-02-22
+
+
+Environment
+===========
+
+    Both FreeSurfer and MNE suite run exclusively on Linux x86 32/64
+    platforms. Both require a license (free of charge), however, the
+    licenses are site-specific and not bound to particular computer hardware.
+
+    Software installation directories
+       /net/roope/opt/mne-2.6-beta
+       /net/roope/opt/freesurfer
+
+    The default MRI directory is /neuro/mri, and in this document all
+    relative paths are expressed with respect to the directory
+    /neuro/mri/<your subject>. For example, if the subject you're analysing
+    is John Smith, the path surf/lh.pial refers to the file
+    /neuro/mri/smith_john/surf/lh.pial
+
+
+Procedure
+=========
+
+0. Prepare your user account
+
+     Add to ~/.bashrc file
+        export FREESURFER_HOME=/home/nmolinaro/nmolinaro/freesurfer. :FREESURFER_HOME=/export/sgeng/sgeng/toolbox/freesurfer
+	    export SUBJECTS_DIR=/home/nmolinaro/nmolinaro/MUTI
+        export MNE_ROOT=/home/nmolinaro/nmolinaro/mne
+        export MATLAB_ROOT=/home/nmolinaro/nmolinaro/MATLAB
+        . $MNE_ROOT/bin/mne_setup_sh
+        . $FREESURFER_HOME/SetUpFreeSurfer.csh
+
+     Add to ~/matlab/startup.m
+        fshome = getenv('FREESURFER_HOME');
+        fsmatlab = sprintf('%s/matlab',fsmatlab);
+        path(path,fsmatlab);
+        clear fshome fsmatlab;
+        fsfasthome = getenv('FSFAST_HOME');
+        fsfasttoolbox = sprintf('%s/toolbox',fsfasthome);
+        path(path,fsfasttoolbox);
+        clear fsfasthome fsfasttoolbox;
+
+     You can avoid logging out/in for the above changes to take effect
+     by saying "source ~/.login".
+
+
+1. Set the $SUBJECT variable to your subject name as found under
+     /neuro/mri. For example,
+
+			export SUBJECT smith_john
+
+     if you are using C-shell or TC-shell or
+
+			export SUBJECT=smith_john
+
+     if you are a SH/BASH user.
+
+
+
+####### FREESURFER ##########
+
+
+
+2. FreeSurfer (1-2 days)
+
+a.			nice recon-all -s $SUBJECT -i $SUBJECTS_DIR/$SUBJECT/mri/<first slice> -wsatlas -autorecon1
+
+        This takes 30 mins - 3 hours on a 2-GHz Pentium
+	Check for scull-stripping, intensity normalization, and talairach transform:
+			
+-			tkmedit $SUBJECT T1.mgz
+			
+               File - Aux volume - Load Aux volume - brain.mgz
+	       	   Use CTRL-1 and CTRL-2 to swap between the two
+               volumes. If scull-stripping did not work correctly, see 
+               https://surfer.nmr.mgh.harvard.edu/fswiki/FsTutorial/SkullStripTutorial
+               
+               Typically parts of cerebellum missing, try:
+               
+               recon-all -skullstrip -wsthresh 35 -wsatlas -subjid $SUBJECT  
+
+
+b.			nice recon-all -s $SUBJECT -autorecon2
+        
+        This takes more than 24 hours
+	Check for segmentation and inflation, e.g.:
+			
+-			tkregister2 --s $SUBJECT --fstal --surf pial
+
+-			tkmedit $SUBJECT T1.mgz
+			
+		  File - Load main surface - lh.pial
+		  
+			
+c.			nice recon-all -s $SUBJECT -autorecon3
+
+        This takes at least 3 hours (record 9 hours).
+			
+-			tksurfer $SUBJECT lh pial
+		  
+		  File - Load Surface... - lh.inflated
+		  File - Curvature - Load Curvature - lh.curv
+	
+
+   Alternatively, all the above steps at once
+
+abc.		nice recon-all -s $SUBJECT -i $SUBJECTS_DIR/$SUBJECT/slices/<first slice> -autorecon-all 
+
+   + needs $SUBJECTS_DIR/$SUBJECT/slices/*
+   + generates mri/* and surf/*
+
+
+
+####### SOURCE SPACE ##########
+
+
+
+3. MRI setup (< 1 min)
+
+			mne_setup_mri --overwrite --subject $SUBJECT
+
+   # 1. Script looks for mri/T1 and mri/brain directories which are not
+   # needed with .mgz files. Fixed by modifying the script
+
+   + needs mri/T1.mgz and mri/brain.mgz
+   + generates mri/T1-neuromag/sets and slices
+   + generates mri/brain-neuromag/sets and slices
+
+
+4. Source space setup (< 1 min)
+
+			mne_setup_source_space --spacing 5 --overwrite --subject $SUBJECT
+
+   Check results by opening mri/T1-neuromag/sets/COR.fif into
+   MRIlab and importing points bem/*.pnt
+
+   # Notes/bugs
+   # - Mrilab (version 1.7.21 on Linux) always crashes when
+   # importing the dip files.
+   # - The comment in the dip files indicate a head coordinate system
+   # which most likely isn't true???
+
+   + needs surf/[rh,lh].white
+   + generates bem/*-src.fif for MNE
+   + generates bem/*.pnt and *.dip for checking with MRILAB
+   + generates bem/*.w
+
+
+5. Segmenting the cranium for the conductor model
+
+   Using watershed (15 min)
+
+			mne_watershed_bem --atlas --overwrite --subject $SUBJECT
+
+   If skull stripping in step 2 required adjusting the wsthresh and/or atlas
+   parameters, use the same values here, e.g. 
+ 
+			mne_watershed_bem --atlas --wsthresh 35 --overwrite --subject $SUBJECT
+
+   NOTE: The distributed version of mne_watershed_bem does not recognize the option "--wsthresh"
+
+   Copy the resulting surface 
+   
+			cp $SUBJECTS_DIR/$SUBJECT/bem/watershed/$SUBJECT_inner_skull_surface $SUBJECTS_DIR/$SUBJECT/bem/inner_skull.surf
+
+   or 
+   
+			ln -s $SUBJECTS_DIR/$SUBJECT/bem/watershed/$SUBJECT'_inner_skull_surface' $SUBJECTS_DIR/$SUBJECT/bem/inner_skull.surf
+			ln -s $SUBJECTS_DIR/$SUBJECT/bem/watershed/$SUBJECT'_outer_skull_surface' $SUBJECTS_DIR/$SUBJECT/bem/outer_skull.surf
+			ln -s $SUBJECTS_DIR/$SUBJECT/bem/watershed/$SUBJECT'_outer_skin_surface'  $SUBJECTS_DIR/$SUBJECT/bem/outer_skin.surf
+			ln -s $SUBJECTS_DIR/$SUBJECT/bem/watershed/$SUBJECT'_brain_surface'       $SUBJECTS_DIR/$SUBJECT/bem/brain_surface.surf
+       
+   
+   + needs mri/???
+   + generates bem/inner_skull.surf
+   + generates bem/<subject>-head.fif
+   + generates bem/watershed/*surface
+
+   Notes:
+    1. The script mne_watershed_bem could copy the surface to
+       bem/inner_skull.surf automatically
+    2. The --wsthresh option should be added to the script
+
+
+
+####### FORWARD SOLUTION A ##########
+
+
+
+6. Forward model setup (< 1 min)
+
+   Using Watershed-generated surfaces (alternative to 6.1, follow if
+   you chose 5.2)
+   
+			mne_setup_forward_model --overwrite --subject $SUBJECT --surf --homog --ico 4
+
+   Now, check bem/inner_skull-<ntri>.pnt with Mrilab by loading it on
+   top of mri/T1-neuromag/sets/COR.fif
+
+   + needs bem/inner_skull.surf
+   + generates bem/<subject>-<ntri>-bem.fif and ...-bem-sol.fif
+   + generates bem/inner_skull-<ntri>.pnt
+
+
+
+
+============== End of steps independent of MEG-data ===================
+
+
+
+####### CO-REGISTRATION ##########
+
+
+
+7. MEG/MRI co-registration
+
+   Load mri/T1-neuromag/sets/COR-fif into MRIlab and establish the
+   head coordinate system. Save under the default name in the same
+   directory.
+
+   + needs mri/T1-neuromag/sets/COR.fif
+   + generates mri/T1-neuromag/sets/COR-<user>-<date>.fif
+   + load isotrak points
+
+
+
+####### FORWARD SOLUTION B ##########
+
+
+
+9. Compute the forward solution (1 .. 2 min)
+
+			mne_do_forward_solution --overwrite --subject $SUBJECT --mindist 5 --spacing 5 --megonly --bem $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'-5120-bem-sol.fif' --src $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'-5-src.fif' --meas $SUBJECTS_DIR/$SUBJECT/$SUBJECT'_raw_tsss_mc.fif' --fwd $SUBJECTS_DIR/$SUBJECT/$SUBJECT'-5-meg-fwd.fif'
+
+   + needs the MEG measurement <meg>.fif for HPI info
+   + needs bem/<subject>-x-src.fif
+   + needs bem/<subject>-y-bem.fif 
+   + needs bem/<subject>-y-bem-sol.fif
+   + needs mri/T1-neuromag/sets/COR-<user>-<date>.fif
+   + generates <meg>-x-fwd.fif
+   
+
+
+####### NOISE COVARIANCE MATRIX ##########
+
+
+
+10. Compute the noise covariance (variable, 1 min and up)
+
+   Preferably use raw data pre-processed similarly to the
+   responses.
+
+			mne_browse_raw --raw $SUBJECTS_DIR/$SUBJECT/$SUBJECT'_raw_tsss_mc.fif' --digtrig STI101
+			
+	or
+			
+			mne_process_raw --raw $SUBJECTS_DIR/$SUBJECT/$SUBJECT'_raw_tsss_mc.fif' --digtrig STI101 --cov $SUBJECTS_DIR/$SUBJECT/muti.cov --savecovtag -cov
+			mne_process_raw --raw $SUBJECTS_DIR/$SUBJECT/$SUBJECT'_raw_tsss_mc.fif' --digtrig STI101 --cov $SUBJECTS_DIR/$SUBJECT/muti.cov --savecovtag -cov --proj $SUBJECTS_DIR/$SUBJECT/$SUBJECT'_blinkprojection.fif' --projon
+			
+    - open the raw data file
+    - apply filters, SSP, etc. similarly to the responses
+    - for evoked responses: Select "Process/Compute covariance"
+        - considers evoked response baselines for the covariance estimate
+        - reads the averaging parameters from a description file (<file>.cov)
+        - if available add the blinkprojection file
+    
+    - for other kind of responses (e.g. ERD/ERS/epilepsy): Select
+          "Process/Compute raw data covariance"
+        - considers a continuous time window for the covariance estimate
+        - the window should preferably reflect a rest condition; no
+          stimuli, no task
+
+   + needs <meg>.fif containing the raw data
+   + generates <meg>-cov.fif
+
+
+
+####### INVERSE OPERATOR ##########
+
+
+
+11. Calculate the inverse operator (< 1 min)
+			
+			mne_inverse_operator --fwd $SUBJECTS_DIR/$SUBJECT/$SUBJECT'-5-meg-fwd.fif' --meg --loose 0.3 --senscov $SUBJECTS_DIR/$SUBJECT/$SUBJECT'_MAX-cov.fif' --depth --magreg 0.1 $PROJ --inv $SUBJECTS_DIR/$SUBJECT/$SUBJECT'-loose0.3-inv.fif'
+   
+   You might try  "--loose 0.2" for a tighter orientation constraint (0.0 - fixed; 1.0 - free)
+   
+   You might also try to play with the --weightexp value: 0.8 by default, but 0.4 is suggested by other users
+
+
+
+####### PRE-PROCESSING STEPS ##########
+
+
+
+12. Pre-process responses
+
+!!  Create a filtered data set in XPlotter (e.g. ##1) and save
+
+!!   If several evoked files are averaged together (e.g. #1 #1:nave * #2 #2:nave * + #1:nave #2:nave + /), 
+	adjust the number of averages with 
+	mne_change_nave --nave <n> <filename>.fif
+
+   Note: The data covariance should usually be pre-processed in the
+   same way as the responses; see step 10.
+
+
+
+####### MAKE MOVIES ##########
+
+
+
+13. Analyze (next to infinite amount of time)
+
+   Usually done with or more of these tools:
+     mne_analyze
+     mne_compute_raw_inverse
+     
+			make_average_subject --subjects   Subject1 Subject2 Subject3
+     
+     movies should be morphed to the average brain (average folder) for generalization
+     
+     mne_make_movie (MNE, dSPM, sLORETA)
+     
+     grand-averaging requires "normalization" before
+     
+     differences can be computed subtarcting different grand-averaged conditions
+     
+     Matlab-based functions (for extracting )
+
