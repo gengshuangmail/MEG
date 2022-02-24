@@ -55,7 +55,7 @@ Procedure
 
 			export SUBJECT S06_5153
 
-     if you are using C-shell or TC-shell or
+     if you are using C-shell or TC-shell or.  (for cluster)
 
 			export SUBJECT=smith_john
 
@@ -119,7 +119,7 @@ abc.		nice recon-all -s $SUBJECT -i $SUBJECTS_DIR/$SUBJECT/slices/<first slice> 
 
 ####### SOURCE SPACE ##########
 
-
+			cd $SUBJECTS_DIR
 
 3. MRI setup (< 1 min)
 
