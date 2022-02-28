@@ -1,0 +1,56 @@
+matname='/bcbl/home/public/Premeg/4Shuang_switch_sr_2020/mat/'
+load('S19_3096sw.mat')
+    cfg=[]
+    cfg.keepsampleinfo = 'yes';
+    timdata=ft_appenddata(cfg,sw_to_bq,sw_to_sp);
+    timdata.fsample =500;
+    timdata.hdr = rep_bq.hdr
+    save('S16_5153swcon.mat','timdata')
+    
+    cfg=[]
+    cfg.keepsampleinfo = 'yes';
+    timdata=ft_appenddata(cfg,rep_bq,rep_sp);
+    timdata.fsample =500;
+    timdata.hdr=rep_bq.hdr
+    save('S14_5549repcon.mat','timdata')
+filename = '/bcbl/home/public/Premeg/4Shuang_switch_sr_2020/raw/S14_5549/S14_5549_rep_con';
+S=spm_eeg_ft2spm(timdata,filename)
+D.fiducials=fiducials;
+Rep_con=D;
+save Rep_con
+
+%%
+rep_con=D
+save rep_con
+%%rep_sp
+filename = '/bcbl/home/public/Premeg/4Shuang_switch_sr_2020/raw/S14_5549/S14_5549_rep_bq';
+
+rep_sp.hdr= rep_bq.hdr
+rep_sp.fsample =rep_bq.fsample
+S=spm_eeg_ft2spm(rep_sp,filename)
+D.fiducials=fiducials
+Rep_sp=D %it is sw_to_bq
+save Rep_sp
+%%sw_bq
+sw_to_bq.hdr=rep_bq.hdr
+sw_to_bq.fsample=rep_bq.fsample
+filename = '/bcbl/home/public/Premeg/4Shuang_switch_sr_2020/raw/MNI/S_5153sw_bq';
+
+S=spm_eeg_ft2spm(sw_to_bq,filename)
+D.fiducials=fiducials
+sw_bq=D
+save sw_bq
+%%sw_sp
+sw_to_sp.hdr = rep_bq.hdr
+sw_to_sp.fsample=rep_bq.fsample
+filename = '/bcbl/home/public/Premeg/4Shuang_switch_sr_2020/raw/MNI/S_5153sw_sp';
+S=spm_eeg_ft2spm(sw_to_sp,filename)
+sw_sp=D
+save sw_sp
+
+%%rep_bq
+filename = '/bcbl/home/public/Premeg/4Shuang_switch_sr_2020/raw/S14_5549/S14_5549rep_bq';
+
+S=spm_eeg_ft2spm(rep_bq,filename)
+rep_bq=D
+save rep_bq
