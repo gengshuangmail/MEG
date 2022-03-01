@@ -1,1 +1,2 @@
 for i=1:trialnumber;timdata.trial{i}(306,:)=[];end
+CM_IF2comp:  there is a 306
