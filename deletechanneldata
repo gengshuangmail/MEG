@@ -1,0 +1,1 @@
+for i=1:68;timdata.trial{i}(306,:)=[];end
