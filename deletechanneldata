@@ -1,2 +1,3 @@
 for i=1:trialnumber;timdata.trial{i}(306,:)=[];end
 CM_IF2comp:  there is a 306
+CM_reshape_ft_CSD: there is a 304(if channels =304,the number should change to 303)
