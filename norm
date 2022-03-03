@@ -11,11 +11,12 @@ mne_do_forward_solution --overwrite  --subject $SUBJECT --meas $SUBJECTS_DIR/$SU
 
 mne_setup_mri --subject $SUBJECT --overwrite
 mne_watershed_bem --subject $SUBJECT --overwrite
+
+在打开CM_configure_norm后,当前目录为crtographie_motrice，exp从naming更改为MNISW后，MNI脚本正常运行。
+成功生成*from-MNI-volumne-5.pnt
+成功生成norm里面forwar_norm.mat, inverse_norm.mat
+
 mne_volume_source_space --surf $SUBJECTS_DIR/$SUBJECT/bem/inner_skull.surf --pos $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'_from_MNI-volume-5.pnt' --src $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'_from_MNI-volume-5-src.fif'
 mne_setup_source_space --subject $SUBJECT --spacing 5 --overwrite
 mne_setup_forward_model --subject $SUBJECT --surf --ico 4 --homog  --overwrite
-mne_do_forward_solution --overwrite --subject $SUBJECT --mindist 0 --megonly --meas $SUBJECTS_DIR/$SUBJECT/S14_5549_raw_tsss_mc.fif --mri $SUBJECTS_DIR/$SUBJECT/mri/T1-neuromag/sets/COR-naming.fif  --bem $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'-5120-bem-sol.fif' --src $SUBJECTS_DIR/$SUBJECT/bem/S14_5549_from_MNI-volume-5-src.fif --fwd $SUBJECTS_DIR/$SUBJECT/S14_5549_from_MNI-naming-5-src-fwd.fif
-
-在打开CM_configure_norm后，exp从naming更改为MNISW后，MNI脚本正常运行。
-成功生成*from-MNI-volumne-5.pnt
-成功生成norm里面forwar_norm.mat, inverse_norm.mat
+mne_do_forward_solution --overwrite --subject $SUBJECT --mindist 0 --megonly --meas $SUBJECTS_DIR/$SUBJECT/S19_3096_raw.fif --mri $SUBJECTS_DIR/$SUBJECT/mri/T1-neuromag/sets/COR-naming.fif  --bem $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'-5120-bem-sol.fif' --src $SUBJECTS_DIR/$SUBJECT/bem/S19_3096_from_MNI-volume-5-src.fif --fwd $SUBJECTS_DIR/$SUBJECT/S19_3096_from_MNI-naming-5-src-fwd.fif
