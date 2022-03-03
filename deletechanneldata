@@ -1,16 +1,18 @@
+开始
+数据准备
+删掉最后两行的channel的数据
 for i=1:trialnumber;timdata.trial{i}(306,:)=[];end
+更改脚本中原来带有306的channel数为304个channel数
 CM_IF2comp:  there is a 306
 CM_reshape_ft_CSD: there is a 304(if channels =304,the number should change to 303)
-mne_do_forward_solution --subject ${SUJET} --meas ${MEG_FILE} --megonly 
---mri ${SUBJECTS_DIR}/${SUJET}/mri/T1-neuromag/sets/COR-${EXP_NAME}.fif 
---src ${SUBJECTS_DIR}/${SUJET}/bem/${SUJET}_from_MNI-volume-${SPACE}-src.fif 
---fwd ${SUBJECTS_DIR}/${SUJET}/meg/${SUJET}_from_MNI-${EXP_NAME}-${SPACE}-src-fwd.fif --mindist 0
 
-
-参照从脚本里来的带有MNI结尾的参数
+对于FWD文件需要注意的是
+必须参照从脚本里来的带有MNI结尾的参数，如果想要在MNI的参照系上，如果不然，会照成vertno的数量不一致。
 mne_setup_mri --subject $SUBJECT --overwrite
 mne_watershed_bem --subject $SUBJECT --overwrite
 mne_volume_source_space --surf $SUBJECTS_DIR/$SUBJECT/bem/inner_skull.surf --pos $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'_from_MNI-volume-5.pnt' --src $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'_from_MNI-volume-5-src.fif'
 mne_setup_source_space --subject $SUBJECT --spacing 5 --overwrite
 mne_setup_forward_model --subject $SUBJECT --surf --ico 4 --homog  --overwrite
 mne_do_forward_solution --overwrite --subject $SUBJECT --mindist 0 --megonly --meas $SUBJECTS_DIR/$SUBJECT/S14_5549_raw_tsss_mc.fif --mri $SUBJECTS_DIR/$SUBJECT/mri/T1-neuromag/sets/COR-naming.fif  --bem $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'-5120-bem-sol.fif' --src $SUBJECTS_DIR/$SUBJECT/bem/S14_5549_from_MNI-volume-5-src.fif --fwd $SUBJECTS_DIR/$SUBJECT/S14_5549_from_MNI-naming-5-src-fwd.fif
+
+结束
