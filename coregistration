@@ -1,2 +1,2 @@
 解决coregistration无法生成cor-trans.fif的问题
-
+通过重新做一遍bash文件解决此问题，怀疑之前遗漏某些bash文件中的某些步骤。
