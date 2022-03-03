@@ -6,9 +6,11 @@ mne_do_forward_solution --subject ${SUJET} --meas ${MEG_FILE} --megonly
 --src ${SUBJECTS_DIR}/${SUJET}/bem/${SUJET}_from_MNI-volume-${SPACE}-src.fif 
 --fwd ${SUBJECTS_DIR}/${SUJET}/meg/${SUJET}_from_MNI-${EXP_NAME}-${SPACE}-src-fwd.fif --mindist 0
 
-mne_setup_mri --subject $SUBJECT
-mne_watershed_bem --subject $SUBJECT
-mne_volume_source_space --surf $SUBJECTS_DIR/$SUBJECT/bem/inner_skull.surf --pos $SUBJECTS_DIR/$SUBJECT/bem/${SUJET}_from_MNI-volume-${SPACE}.pnt --src ${SUBJECTS_DIR}/${SUJET}/bem/${SUJET}_from_MNI-volume-${SPACE}-src.fif
-mne_setup_source_space --subject $SUBJECT --spacing 5
-mne_setup_forward_model --subject $SUBJECT --surf --ico 4 --homog
+
+参照从脚本里来的带有MNI结尾的参数
+mne_setup_mri --subject $SUBJECT --overwrite
+mne_watershed_bem --subject $SUBJECT --overwrite
+mne_volume_source_space --overwrite --surf $SUBJECTS_DIR/$SUBJECT/bem/inner_skull.surf --pos $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'_from_MNI-volume-5.pnt' --src $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'_from_MNI-volume-5-src.fif'
+mne_setup_source_space --subject $SUBJECT --spacing 5 --overwrite
+mne_setup_forward_model --subject $SUBJECT --surf --ico 4 --homog  --overwrite
 mne_do_forward_solution --overwrite --subject $SUBJECT --mindist 0 --megonly --meas $SUBJECTS_DIR/$SUBJECT/S14_5549_raw_tsss_mc.fif --mri $SUBJECTS_DIR/$SUBJECT/mri/T1-neuromag/sets/COR-naming.fif  --bem $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'-5120-bem-sol.fif' --src $SUBJECTS_DIR/$SUBJECT/bem/S14_5549_from_MNI-volume-5-src.fif --fwd $SUBJECTS_DIR/$SUBJECT/S14_5549_from_MNI-naming-5-src-fwd.fif
