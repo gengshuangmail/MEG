@@ -2,4 +2,5 @@ norm文件夹中forard_norm.mat文件无法生成。
 第二次遇到这个问题。。。
 
 
- mne_do_forward_solution --subject $SUBJET --meas ${MEG_FILE} --megonly --mri $SUBJECTS_DIR/$SUBJECT/mri/T1-neuromag/sets/COR-naming.fif --src $SUBJECTS_DIR}=/$SUBJET/bem/$SUBJECT'-volume-5-src.fif' --fwd $SUBJECTS_DIR/$SUBJET/meg/$SUBJET-naming-5-src-fwd.fif
+ mne_do_forward_solution --subject $SUBJECT --meas $SUBJECTS_DIR/$SUBJECT/$SUBJECT'_raw.fif' --megonly --mri $SUBJECTS_DIR/$SUBJECT/mri/T1-neuromag/sets/COR-naming.fif --src $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'-volume-5-src.fif' --fwd $SUBJECTS_DIR/$SUBJECT/meg/$SUBJCET'-naming-5-src-fwd.fif'
+	mne_do_forward_solution --overwrite --subject $SUBJECT --mindist 5 --spacing 5 --megonly --bem $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'-5120-bem-sol.fif' --src $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'-5-src.fif' --meas $SUBJECTS_DIR/$SUBJECT/$SUBJECT'_raw_tsss_mc.fif' --fwd $SUBJECTS_DIR/$SUBJECT/$SUBJECT'-5-meg-fwd.fif'
