@@ -1,9 +1,21 @@
 norm文件夹中forard_norm.mat文件无法生成。
 第二次遇到这个问题。。。
 
+尝试手动进行bash文件
+
 mne_setup_forward_model --subject $SUBJECT --surf --ico 4 --homog  --overwrite
 mne_do_forward_solution --overwrite --subject $SUBJECT --meas $SUBJECTS_DIR/$SUBJECT/$SUBJECT'_raw.fif' --megonly --mri $SUBJECTS_DIR/$SUBJECT/mri/T1-neuromag/sets/COR-naming.fif --src $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'-volume-5-src.fif' --fwd $SUBJECTS_DIR/$SUBJECT/meg/$SUBJECT'-naming-5-src-fwd.fif'
 mne_do_forward_solution --overwrite  --subject $SUBJECT --meas $SUBJECTS_DIR/$SUBJECT/$SUBJECT'_raw.fif' --megonly --fixed --mri $SUBJECTS_DIR/$SUBJECT/mri/T1-neuromag/sets/COR-naming.fif --spacing 5 --fwd $SUBJECTS_DIR/$SUBJECT/meg/$SUBJECT-naming-5-anat-fwd.fif
 
+尝试手动进行bash文件（MNI参考）
 
-mne_do_forward_solution --overwrite --subject $SUBJECT --mindist 5 --spacing 5 --megonly --bem $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'-5120-bem-sol.fif' --src $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'-5-src.fif' --meas $SUBJECTS_DIR/$SUBJECT/$SUBJECT'_raw_tsss_mc.fif' --fwd $SUBJECTS_DIR/$SUBJECT/$SUBJECT'-5-meg-fwd.fif'
+mne_setup_mri --subject $SUBJECT --overwrite
+mne_watershed_bem --subject $SUBJECT --overwrite
+mne_volume_source_space --surf $SUBJECTS_DIR/$SUBJECT/bem/inner_skull.surf --pos $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'_from_MNI-volume-5.pnt' --src $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'_from_MNI-volume-5-src.fif'
+mne_setup_source_space --subject $SUBJECT --spacing 5 --overwrite
+mne_setup_forward_model --subject $SUBJECT --surf --ico 4 --homog  --overwrite
+mne_do_forward_solution --overwrite --subject $SUBJECT --mindist 0 --megonly --meas $SUBJECTS_DIR/$SUBJECT/S14_5549_raw_tsss_mc.fif --mri $SUBJECTS_DIR/$SUBJECT/mri/T1-neuromag/sets/COR-naming.fif  --bem $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'-5120-bem-sol.fif' --src $SUBJECTS_DIR/$SUBJECT/bem/S14_5549_from_MNI-volume-5-src.fif --fwd $SUBJECTS_DIR/$SUBJECT/S14_5549_from_MNI-naming-5-src-fwd.fif
+
+在打开CM_configure_norm后，exp从naming更改为MNISW后，MNI脚本正常运行。
+成功生成*from-MNI-volumne-5.pnt
+成功生成norm里面forwar_norm.mat, inverse_norm.mat
