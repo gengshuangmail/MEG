@@ -1,0 +1,2 @@
+module load freesurfer/7.1.1
+nice recon-all -s $SUBJECT -i /bcbl/home/home_n-z/sgeng/projects/bilingual_patients_2021/$SUBJECT/IM-0013-0001.dcm -autorecon-all
