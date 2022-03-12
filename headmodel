@@ -32,10 +32,10 @@ Procedure
 
      Add to ~/.bashrc file
          export FREESURFER_HOME=/export/home/sgeng/sgeng/toolbox/freesurfer
-	 export SUBJECTS_DIR=/export/home/sgeng/sgeng/projects/naming/Naming_controls/filedtrip_data/FreeSurfer
-         export MATLAB_ROOT=/export/home//sgeng/sgeng/toolbox/MATLAB                    
+	 export SUBJECTS_DIR=/export/home/sgeng/sgeng/projects/bilingual_patients_2021/FreeSurfer
+         export MATLAB_ROOT=/export/home/sgeng/sgeng/toolbox/MATLAB                    
         . $MNE_ROOT/bin/mne_setup_sh                               
-	. $FREESURFER_HOME/SetUpFreeSurfer.csh                       
+	. $FREESURFER_HOME/SetUpFreeSurfer.sh                       
      Add to ~/matlab/startup.m
         fshome = getenv('FREESURFER_HOME');
         fsmatlab = sprintf('%s/matlab',fsmatlab);
