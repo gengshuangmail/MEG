@@ -162,7 +162,11 @@ abc.		nice recon-all -s $SUBJECT -i $SUBJECTS_DIR/$SUBJECT/slices/<first slice> 
    parameters, use the same values here, e.g. 
  
 			mne_watershed_bem --atlas --wsthresh 35 --overwrite --subject $SUBJECT
-
+			
+   NOTE: when could not fine inner_skull.surf
+   
+                        mne_watershed_bem --subject $SUBJECT --overwrite
+   
    NOTE: The distributed version of mne_watershed_bem does not recognize the option "--wsthresh"
 
    Copy the resulting surface 
