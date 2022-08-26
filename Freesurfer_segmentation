@@ -4,3 +4,5 @@ export SUBJECT=post52
 nice recon-all -s $SUBJECT -i /bcbl/home/home_n-z/sgeng/projects/bilingual_patients_2021/$SUBJECT/IM-0013-0001.dcm -autorecon-all
 
 cd /bcbl/home/public/Premeg/Mirror_sys_2022
+nice recon-all -s $SUBJECT -i /bcbl/home/public/Premeg/Mirror_sys_2022/$SUBJECT/*FUNCIONAL*/IM-0001-0001.dcm -autorecon-all
+export SUBJECTS_DIR=/bcbl/home/public/Premeg/Mirror_sys_2022/T1/$SUBJECT/
