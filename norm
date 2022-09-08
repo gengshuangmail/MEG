@@ -22,8 +22,11 @@ mne_do_forward_solution --overwrite --subject $SUBJECT --mindist 0 --megonly --m
 运行CM_configure_norm，设定subject=subjects{1}，即if ~exist(fullfile(subjects_dir,subject))，subject的格式为charator string
 运行成功，生成成功*from-MNI-volumne-5.pnt
 成功生成norm里面forwar_norm.mat, inverse_norm.mat
+
+
 mne_volume_source_space --surf $SUBJECTS_DIR/$SUBJECT/bem/inner_skull.surf --pos $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'_from_MNI-volume-5.pnt' --src $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'_from_MNI-volume-5-src.fif'
 生成src文件
-mne_do_forward_solution --overwrite --subject $SUBJECT --mindist 0 --megonly --meas $SUBJECTS_DIR/$SUBJECT/S06_5153_raw.fif --mri $SUBJECTS_DIR/$SUBJECT/mri/T1-neuromag/sets/COR-naming.fif  --bem $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'-5120-bem-sol.fif' --src $SUBJECTS_DIR/$SUBJECT/bem/S06_5153_from_MNI-volume-5-src.fif --fwd $SUBJECTS_DIR/$SUBJECT/S06_5153_from_MNI-naming-5-src-fwd.fif
+mne_do_forward_solution --overwrite --subject $SUBJECT --mindist 0 --megonly --meas $SUBJECTS_DIR/raw/S06_5153_raw.fif --mri $SUBJECTS_DIR/$SUBJECT/mri/T1-neuromag/sets/COR-naming.fif  --bem $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'-5120-bem-sol.fif' --src $SUBJECTS_DIR/$SUBJECT/bem/S06_5153_from_MNI-volume-5-src.fif --fwd $SUBJECTS_DIR/$SUBJECT/S06_5153_from_MNI-naming-5-src-fwd.fif
 
+mne_do_forward_solution --overwrite --subject $SUBJECT --mindist 0 --megonly --meas $SUBJECTS_DIR/raw/$SUBJECT'_mirror_sys_quat_tsss.fif' --mri $SUBJECTS_DIR/$SUBJECT/mri/T1-neuromag/sets/COR-Mirror.fif  --bem $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'-5120-bem-sol.fif' --src $SUBJECTS_DIR/$SUBJECT/bem/$SUBJECT'_from_MNI-volume-5-src.fif' --fwd $SUBJECTS_DIR/$SUBJECT/$SUBJECT'_from_MNI-Mirror-5-src-fwd.fif'
 
